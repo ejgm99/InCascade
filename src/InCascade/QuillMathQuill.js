@@ -35,6 +35,7 @@ var quill_emitter = null;
 
 export function setCurrentPosition(position){
   currentPosition = position;
+  console.log('CurrentPosition is set: ',currentPosition)
 }
 
 function focusOnMQ(id){
@@ -56,6 +57,7 @@ function checkIfPositionInRange(position, range){
 }
 
 export function shouldFocusOnMq(range){
+  console.log('MathQuillState',MathquillState)
   for (var key in MathquillState){
     let MQ_position = MathquillState[key]
     console.log('MQ position: ',MQ_position)
@@ -80,7 +82,8 @@ export function getState(){
 }
 
 //set the state of each position of MQ and their offsets
-export function setState(new_state){
+export function setMqState(new_state){
+  console.log('Received new state: ',new_state)
   MathquillState = JSON.parse(new_state);
 }
 
@@ -88,8 +91,13 @@ export function setQuillEmitter(q_emitter){
   quill_emitter = q_emitter;
 }
 
+
+
 //takes in information about updates made to the DOM and updates how to handle the positions of the window
 export function updateMQPositions(new_position){
+  console.log('We have a new position:', new_position)
+  console.log('Current position:', currentPosition)
+  
   //this function should only be called on a text change, so we will need to update offsets based on new_position and old_position
   let d_pos = new_position-currentPosition;
   for (var key in MathquillState){
@@ -102,6 +110,9 @@ export function updateMQPositions(new_position){
 
 class myFormula extends Embed {
 
+  // deleteAt(index, length){
+  //   console.log('Deleting a mathquill from the quill side of things')
+  // }
 
   constructor(node){
     super(node)
@@ -271,3 +282,4 @@ class MathQuillFormula extends Formula {
 }
 
 Quill.register('modules/formula',MathQuillFormula,true)
+
