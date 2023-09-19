@@ -26,7 +26,7 @@ function isDefined(key, object){
   }
   return true
 }
-
+  
 export var MathquillState = {}
 
 var currentPosition = -1;
@@ -35,7 +35,7 @@ var quill_emitter = null;
 
 export function setCurrentPosition(position){
   currentPosition = position;
-  console.log('CurrentPosition is set: ',currentPosition)
+  // console.log('CurrentPosition is set: ',currentPosition)
 }
 
 function focusOnMQ(id){
@@ -44,26 +44,19 @@ function focusOnMQ(id){
 }
 
 function checkIfPositionInRange(position, range){
-  let bounds = []
-  if (range[1] == -1) {
-    bounds = [range[0],range[0]-range[1]]
-  }
-  else {
-    bounds = [range[0]-range[1],range[0]]
-  }
-  console.log('bounds: ',bounds)
-  console.log('bool: ',bounds[0]<position & position<bounds[1] )
-  return bounds[0]<position & position<bounds[1] 
+  console.log('average baby',(range[0]+(range[0]-range[1]))/2.0)
+  return position==(range[0]+(range[0]-range[1]))/2.0
 }
 
 export function shouldFocusOnMq(range){
-  console.log('MathQuillState',MathquillState)
+  // console.log('MathQuillState',MathquillState)
   for (var key in MathquillState){
     let MQ_position = MathquillState[key]
-    console.log('MQ position: ',MQ_position)
-    console.log('range: ',range)
+    // console.log('MQ position: ',MQ_position)
+    // console.log('range: ',range)
     if (checkIfPositionInRange(MQ_position,range)){
-      console.log('focusing on: ',key+'_Editor')
+      console.log('Focusing into: ',key,MathquillState[key])
+      // console.log('focusing on: ',key+'_Editor')
       return focusOnMQ(key+'_Editor')
     }
   }
@@ -100,8 +93,13 @@ export function updateMQPositions(new_position){
   
   //this function should only be called on a text change, so we will need to update offsets based on new_position and old_position
   let d_pos = new_position-currentPosition;
+  console.log('d_pos can be zero for mathquills',d_pos)
+  if (d_pos==0){
+    d_pos = 1;
+  }
   for (var key in MathquillState){
-    if (MathquillState[key]>currentPosition){
+    if (MathquillState[key]>currentPosition+.6){
+      console.log(key,MathquillState[key])
       MathquillState[key] = MathquillState[key]+d_pos;
     }
   }
@@ -149,17 +147,17 @@ class myFormula extends Embed {
 // this function creates a new mathquill and appends it to the DOM
 // takes in id and position
   static create(value) {
-    console.log('Creating new mathquill: ',value)
+    // console.log('Creating new mathquill: ',value)
     let mathquillString = value.content
     let quillEmitter = value.emitter
-    console.log('mathquillString: ', mathquillString)
+    // console.log('mathquillString: ', mathquillString)
     let d = new Date()
     let node = super.create(mathquillString)
     var id;
     if (!isDefined('id',value)){
       id = 'MQ'+d.getTime().toString()
     } else {
-      console.log('This is a mathquill from the database, just using its id')
+      // console.log('This is a mathquill from the database, just using its id')
       id = value.id
     }
     
@@ -187,13 +185,13 @@ class myFormula extends Embed {
             // window.emitter.emit( 'editedMathCell', {'id':id,'latex':mathField.latex()})
           },
           enter: function() {
-            console.log('Need to implement refocusing on Quill');
+            // console.log('Need to implement refocusing on Quill');
           },
            moveOutOf: function(dir, math){
             quill_emitter.emit('leaveMathCell',{'id':id, 'dir':dir})
           },
           upOutOf: function(mathField){
-            console.log('select if this is going to be a main body or not?')
+            // console.log('select if this is going to be a main body or not?')
           },
           downOutOf: function(mathField){
 
@@ -230,7 +228,7 @@ class MathQuillFormula extends Formula {
     this.previousCursorPosition;
     this.quill.on('selection-change', this.shouldFocus.bind(this))
     this.quill.on('text-change', this.shiftEmbedPosition.bind(this))
-    console.log('MQF constructer is firing')
+    // console.log('MQF constructer is firing')
     this.emitter.addListener('leaveMathCell', (params) => {
       this.selectInQuill(params.id, params.dir)
     })

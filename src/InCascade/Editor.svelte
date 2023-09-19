@@ -1,8 +1,7 @@
 <script>
     import { onMount } from "svelte";
-    
-
     import DeltaVisualizer from "../debug/deltaVisualizer.svelte";
+    import ObjectVisualizer from "../debug/ObjectVisualizer.svelte";
     import {handleKeyDown,handleKeyUp,setEmitter} from './KeystrokeHandler'
     import {getPost} from '../data/fetch.js'
 
@@ -16,8 +15,17 @@
     let doc_delta = 0;
     let doc_position = -1;
     let doc_mq = 0;
+    let quill_length;
+    let mq_state = 0;
+    let mq_handover = 0;
+    let quill_obj = {}
+    let quill_handover = {}
+    let quill_rendered = false;
+    let cursor_position = 0;
+    $: quill_obj=quill_handover;
+    $: mq_state = mq_handover;
+    // $: quill_length = quill_length    
 
-    
     onMount(async () => {
 
       if (browser){
@@ -29,9 +37,10 @@
               let cascade_map = await getPost(post_id);
 
               let quill = CascadeEditor.setupQuill(editor,cascade_map)
-
+              doc_delta = quill.getContents().ops
+              quill_obj = quill.getLength()
             //   MathQuillFormula.setQuillEmitter(quill.emitter)
-            //   MathQuillFormula.setState(cascade_map.cascade.mq)
+            // MathQuillFormula.setState(cascade_map.cascade.mq)
 
             //   quill.setContents(JSON.parse(cascade_map.cascade.quill))
             //   quill.on('text-change', function() {
@@ -40,14 +49,20 @@
             //     } catch{}
             //   })
 
-            //   quill.on('selection-change', function() {
-            //     try{
-            //     MathQuillFormula.setCurrentPosition(quill.getSelection().index)
-            //     } catch {
-                  
-            //     }
-            //   })
+              quill.on('editor-change', function(eventName) {
+                console.log('Event change: ',eventName)
+                quill_rendered=true
+                // console.log(`We've detected a selection change`, quill_obj)
+                quill_length = quill.getLength()
+                // console.log(quill_length)
+                mq_handover = MathQuillFormula.getState()
+                quill_handover = quill
+                // console.log(quill.getContents())
+                cursor_position = quill.getSelection().index
+                console.log(cursor_position)
+              })
               
+
             //   //need to pass in the emitter to our keystroke handler to be able to save
             //   setEmitter(quill.emitter)
 
@@ -136,12 +151,35 @@
     }
   </style>
   
-
   <div class="editor-wrapper">
     <div on:keydown={handleKeyDown} on:keyup={handleKeyUp} bind:this={editor} />
   </div>
 
-  <div>
+  <p> Editor {quill_obj} </p>
+
+  <p> Cursor Position {cursor_position} </p>
+
+{#if quill_rendered}
+  
+  <p> Mq Handover {mq_state}</p>
+  
+  {#each Object.keys(mq_state) as mq_pos}
+    <!-- {typeof(mq_state{mq_pos})} -->
+  {/each}
+
+  <p> QUILL RENDERING </p>
+  <ObjectVisualizer ops = {quill_obj.options.modules}> </ObjectVisualizer>
+  {#each Object.keys(quill_obj) as operation}
+  
+  <li>
+    {operation}
+      <ObjectVisualizer ops = {quill_obj[operation]}> </ObjectVisualizer>
+  </li>
+   {/each}
+
+{/if}
+
+  <!-- <div>
   <p>{doc_delta}</p>
-  <DeltaVisualizer ops={doc_delta} position = {doc_position} mq = {doc_mq}></DeltaVisualizer>
-  </div>
+  <DeltaVisualizer ops={doc_delta} position = {doc_position} mq = {doc_mq} quill={quill_obj}></DeltaVisualizer>
+  </div> -->

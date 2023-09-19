@@ -1,7 +1,6 @@
 <script>
 
-    export let ops,position,mq,length;
-
+    export let ops,position,mq,length,q_length;
 
 </script>
 
@@ -9,6 +8,11 @@
 <p>Editor length: {length}</p>
 
 <p> Delta: {ops}</p>
+
+<p>
+   {q_length} 
+</p>
+
 
 <ul>
 	{#each Object.keys(ops) as op}

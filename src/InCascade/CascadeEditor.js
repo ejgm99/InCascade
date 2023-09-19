@@ -4,7 +4,6 @@ import Quill from 'quill';
 import {setQuillEmitter,updateMQPositions,shouldFocusOnMq,getState,setCurrentPosition,setMqState} from './QuillMathQuill.js';
 import {handleKeyDown,handleKeyUp,setEmitter} from './KeystrokeHandler'
 import {writeDataToMapField} from "../data/write.js";
-console.log(Quill)
 
 var myQuill;
 let textChange = false;
@@ -38,7 +37,7 @@ var toolbarOptions = {
 
 function containsDeletion(text_change){
     for (var change in text_change) {
-        console.log(change)
+        // console.log(change)
     }
 }
 
@@ -56,7 +55,6 @@ export function setState(){
 }
 
 export function setupQuill(editor,cascade_map){
-    console.log('Our current idea of this: ',this)
     myQuill = new Quill(editor, {
         modules: {
           toolbar: toolbarOptions,
@@ -103,8 +101,8 @@ export function setupQuill(editor,cascade_map){
         // args[0] will be delta
           doc_delta = myQuill.getContents().ops
           // need to add to all the mq's ahead of us in order to not accidentally focus on them
-          console.log('quill selection',myQuill.getSelection().index)
-          console.log('Delta: ', args)
+          // console.log('quill selection',myQuill.getSelection().index)
+          // console.log('Delta: ', args)
           updateMQPositions(myQuill.getSelection().index)
         } else if (eventName === 'selection-change') {
           // need to generate all the info necessary to understand the nature of the selection change
@@ -135,7 +133,6 @@ export function setupQuill(editor,cascade_map){
         }
 
       });
-
     myQuill.on('leaveMathCell',function(args){
       // depending on the direction we want to move we leave teh math cell
       myQuill.setSelection(myQuill.getSelection().index+args.dir+1)
