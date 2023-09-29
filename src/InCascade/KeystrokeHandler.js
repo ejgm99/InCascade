@@ -7,9 +7,18 @@ var isEnterPressed = false;
 var isSPressed = false;
 var isCommandPressed = false;
 var emitter = -1;
+var isBackspacePressed = false;
 
 export function setEmitter(e){
     emitter = e;
+}
+
+export function getBackspacePressed(){
+    if(isBackspacePressed){
+        isBackspacePressed = false;
+        return true
+    }
+    return false;
 }
 
 export function handleKeyDown(e){
@@ -28,6 +37,8 @@ export function handleKeyDown(e){
         if (isMetaPressed){
             e.preventDefault();
         } 
+    } else if ((e.key) == 'Backspace'){
+        isBackspacePressed = true;
     }
     if (isMetaPressed && isSPressed) {
         emitter.emit('save')

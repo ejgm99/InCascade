@@ -3,8 +3,9 @@ import Quill from 'quill'
 
 //import MathQuill Dependancies
 import MathQuill from './mathquill/mathquill'
+import { getBackspacePressed } from './KeystrokeHandler';
 
-
+import { deleteAtPosition } from './CascadeEditor';
 // <textarea autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false" x-palm-disable-ste-all="true" aria-label="Math Input:"></textarea>
 
 //This code does two things 
@@ -13,6 +14,8 @@ import MathQuill from './mathquill/mathquill'
 
 var Embed = Quill.import('blots/embed')
 var MQ = MathQuill.MathQuill.getInterface(3);
+var emptyBackspaceCount = 0; //variable that keeps track of how many times backspace has been pressed while in an empty mathquill item
+var backoutofThreshold = 2; //configurable variable that is the threshold for when to delete a mathquill object
 
 
 // a javascript object capturing:
@@ -180,12 +183,17 @@ class myFormula extends Embed {
         handlers: {
           edit: function () {
             //Going to need to figure out how to push in our delta function to reflect change on the GUI
-
+            if(mathField.latex() =='' && getBackspacePressed()){
+              emptyBackspaceCount++;
+              if (emptyBackspaceCount==backoutofThreshold){
+                emptyBackspaceCount = 0;
+                deleteAtPosition()
+              }
+            }
             node.setAttribute('data-latex', mathField.latex())
             // window.emitter.emit( 'editedMathCell', {'id':id,'latex':mathField.latex()})
           },
           enter: function() {
-            // console.log('Need to implement refocusing on Quill');
           },
            moveOutOf: function(dir, math){
             quill_emitter.emit('leaveMathCell',{'id':id, 'dir':dir})
@@ -198,8 +206,6 @@ class myFormula extends Embed {
           }
         },
       });
-
-
 
     this.mathField = mathField
     return node

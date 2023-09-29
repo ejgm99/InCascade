@@ -50,6 +50,26 @@ export function getICState(){
 
 }
 
+export function deleteAtPosition(){
+  let change = {
+    "ops": [
+      {
+        "retain": myQuill.getSelection().index
+      },
+      {
+        "delete": 1
+      }
+    ]
+  }
+
+  console.log(change)
+  myQuill.updateContents(change)
+}
+
+export function getPosition(){
+  return myQuill.getSelection()
+}
+
 export function setState(){
 
 }

@@ -49,7 +49,7 @@
             //     } catch{}
             //   })
 
-              quill.on('editor-change', function(eventName) {
+            quill.on('editor-change', function(eventName) {
                 console.log('Event change: ',eventName)
                 quill_rendered=true
                 // console.log(`We've detected a selection change`, quill_obj)
