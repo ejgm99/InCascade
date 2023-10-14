@@ -8,7 +8,6 @@ import {writeDataToMapField} from "../data/write.js";
 var myQuill;
 let textChange = false;
 let textChangeLength =-1;
-
 let doc_delta = 0;
 let doc_position = -1;
 let doc_mq = 0;
@@ -35,21 +34,6 @@ var toolbarOptions = {
 
 };
 
-function containsDeletion(text_change){
-    for (var change in text_change) {
-        // console.log(change)
-    }
-}
-
-export function getICState(){
-    // gets the state of everything this editor needs
-    // get quill state
-
-    // get MathQuill state
-
-
-}
-
 export function deleteAtPosition(){
   let change = {
     "ops": [
@@ -61,9 +45,7 @@ export function deleteAtPosition(){
       }
     ]
   }
-
-  console.log(change)
-  myQuill.updateContents(change)
+  myQuill.updateContents(change);
 }
 
 export function getPosition(){
@@ -98,14 +80,12 @@ export function setupQuill(editor,cascade_map){
 
       myQuill.on('text-change', function() {
         try{
-            console.log('text change detected')
             setCurrentPosition(myQuill.getSelection().index)
         } catch{}
       })
 
       myQuill.on('selection-change', function() {
         try{
-                console.log('selection change detected')
             setCurrentPosition(myQuill.getSelection().index)
         } catch {
           
@@ -121,8 +101,6 @@ export function setupQuill(editor,cascade_map){
         // args[0] will be delta
           doc_delta = myQuill.getContents().ops
           // need to add to all the mq's ahead of us in order to not accidentally focus on them
-          // console.log('quill selection',myQuill.getSelection().index)
-          // console.log('Delta: ', args)
           updateMQPositions(myQuill.getSelection().index)
         } else if (eventName === 'selection-change') {
           // need to generate all the info necessary to understand the nature of the selection change
@@ -140,7 +118,6 @@ export function setupQuill(editor,cascade_map){
 
           }
           // args[0] will be old range
-          // console.log('Quill has detected selection',myQuill.getSelection().index)
         }
         
         //updating our MQ's awareness of cursor position at the end to discern what has been changed
@@ -172,7 +149,6 @@ export function setupQuill(editor,cascade_map){
         }
         }
     )
-
     //not sure we'll be needing to return quill but just in case
     return myQuill;
 }

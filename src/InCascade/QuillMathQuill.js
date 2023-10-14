@@ -9,7 +9,6 @@ import { deleteAtPosition } from './CascadeEditor';
 //This code does two things 
 //   1) takes in info from our handler about position and content to manage focusing on windows
 //   2) Sets up behavior for creating new mathquill instances 
-
 var Embed = Quill.import('blots/embed')
 var MQ = MathQuill.MathQuill.getInterface(3);
 var emptyBackspaceCount = 0; //variable that keeps track of how many times backspace has been pressed while in an empty mathquill item
@@ -24,19 +23,24 @@ function isDefined(key, object){
   }
   return true
 }
-  
+
 export var MathquillState = {}
 
 var currentPosition = -1;
 var quill_emitter = null;
 
+var mathCount = 0;
+function getMathCount(){
+  mathCount++;
+  return mathCount;
+}
 
 export function setCurrentPosition(position){
   currentPosition = position;
 }
 
 function focusOnMQ(id){
-  let node = document.getElementById(id)
+  let node = document.getElementById(id+'_Editor')
   node.focus()
 }
 
@@ -48,8 +52,7 @@ export function shouldFocusOnMq(range){
   for (var key in MathquillState){
     let MQ_position = MathquillState[key]
     if (checkIfPositionInRange(MQ_position,range)){
-      // console.log('focusing on: ',key+'_Editor')
-      return focusOnMQ(key+'_Editor')
+      return focusOnMQ(key)
     }
   }
 }
@@ -77,39 +80,51 @@ export function setQuillEmitter(q_emitter){
 
 //takes in information about updates made to the DOM and updates how to handle the positions of the window
 export function updateMQPositions(new_position){
-  console.log('We have a new position:', new_position)
-  console.log('Current position:', currentPosition)
-  
   //this function should only be called on a text change, so we will need to update offsets based on new_position and old_position
   let d_pos = new_position-currentPosition;
-  console.log('d_pos can be zero for mathquills',d_pos)
   if (d_pos==0){
     d_pos = 1;
   }
   for (var key in MathquillState){
     if (MathquillState[key]>currentPosition+.6){
-      console.log(key,MathquillState[key])
       MathquillState[key] = MathquillState[key]+d_pos;
     }
   }
 }
 
-class myFormula extends Embed {
+//checks in passed in properties to make sure an ID is set
+//if not set, generates a new id
+function generateUniqueId(value){
+  var id;
+  if (!isDefined('id',value)){
+    let d = new Date()
+    id = 'MQ'+d.getTime().toString()
+  } else {
+    id = value.id
+  }
+  return id
+}
 
-  // deleteAt(index, length){
-  //   console.log('Deleting a mathquill from the quill side of things')
-  // }
+function preprocessLatex(inputLatex){
+  if (inputLatex==null){
+    inputLatex = "";
+  }
+  return inputLatex
+}
+
+class myFormula extends Embed {
 
   constructor(node){
     super(node)
     this.latex = 'going'
-    this.editorId = node.id+'_Editor'
+    this.editorId = node.id
     this.mathField = null
-    node.childNodes[1].childNodes[0].childNodes[0].id = this.editorId
-  }
+}
 
   appendChild(child){
-    let timer = setTimeout(()=> {focusOnMQ(this.editorId)}, 1)
+  let timer = setTimeout(()=> {
+      focusOnMQ(this.editorId)
+    }, 1)
   }
   html(){
     return '<latex>'+this.mathField.latex()+'</latex>'
@@ -126,32 +141,17 @@ class myFormula extends Embed {
 // takes in id and position
   static create(value) {
     let mathquillString = value.content
-    let quillEmitter = value.emitter
-    let d = new Date()
     let node = super.create(mathquillString)
-    var id;
-    if (!isDefined('id',value)){
-      id = 'MQ'+d.getTime().toString()
-    } else {
-      id = value.id
-    }
-    
+    //generate id 
+    var id =  generateUniqueId(value);
+    //generate the positioning data
     newMQ(id,currentPosition+0.5)
-    var inputLatex=mathquillString
-    node.setAttribute('id', id)
-    node.setAttribute('data-latex',mathquillString)
-    node.classList.add('paddedDiv')
-
-    if (inputLatex==null){
-      inputLatex = "";
-    }
-
-    node.innerHTML = inputLatex
-    var mathField = generateInlineMathfield({
-      'id': id,
+    mathquillString = preprocessLatex(mathquillString)
+    generateMathfield({
+      'id':id,
+      'mathquillString':mathquillString
     }, node)
-    console.log('mathfield returned: ', mathField)
-    this.mathField = mathField
+    node.id = id
     return node
   }
 }
@@ -166,16 +166,41 @@ var Formula = Quill.import('modules/formula')
 // for now I'll just pass the containing object into this, but I can't help but wonder if there is any more of a containing object 
 // that should be required for this
 //this function needs to solve the problem of referencing an arbitrary javascript object that this gets attached to 
+function generateMathfield(props,element){
+  let mathquillString = 'e^x'
+  let inputLatex = 'e^x'
+  const body = document.createElement('body')
+  body.classList.add('container');
+  const div1 = document.createElement('span');
+  div1.setAttribute('data-latex',mathquillString)
+  div1.classList.add('left');
+  div1.textContent = mathquillString;
+  div1.innerHTML = inputLatex
+  var mathField = MQ.MathField(
+    div1, generateMathquillConfig(mathField,props.id+'_Editor')
+  )
+  div1.childNodes[0].childNodes[0].id = props.id+'_Editor'
+  const div2 = document.createElement('span');
+  div2.classList.add('right');
+  div2.textContent = getMathCount();
+  body.appendChild(div1);
+  body.appendChild(div2);
+  element.appendChild(body);
+}
 
 function generateInlineMathfield(props, element){
+  // element.setAttribute('id', props.id)
+  element.setAttribute('data-latex',props.mathquillString)
+  element.classList.add('paddedDiv')
   var mathField = MQ.MathField(
     element, generateMathquillConfig(mathField,props.id)
   )
+  // element.childNodes[1].childNodes[0].childNodes[0].id = props.id
+  element.childNodes[0].childNodes[0].id = props.id+'_Editor'
   return mathField
 }
 
 function generateMathquillConfig(mathField,id){
-  console.log(mathField)
   return {
     spaceBehavesLikeTab: true, // an example config option, for more see:
     //   http://docs.mathquill.com/en/latest/Config/
@@ -214,7 +239,6 @@ class MathQuillFormula extends Formula {
     }
     this.numberOfMQs = Object.keys(this.MathCells).length;
     this.quill = node
-
     this.previousLengthOfDocument;
     this.previousCursorPosition;
     this.quill.on('selection-change', this.shouldFocus.bind(this))

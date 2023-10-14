@@ -50,16 +50,10 @@
             //   })
 
             quill.on('editor-change', function(eventName) {
-                console.log('Event change: ',eventName)
                 quill_rendered=true
-                // console.log(`We've detected a selection change`, quill_obj)
                 quill_length = quill.getLength()
-                // console.log(quill_length)
                 mq_handover = MathQuillFormula.getState()
-                quill_handover = quill
-                // console.log(quill.getContents())
-                cursor_position = quill.getSelection().index
-                console.log(cursor_position)
+                quill_handover = quill.getContents()
               })
               
 
@@ -89,7 +83,7 @@
 
             //       }
             //       // args[0] will be old range
-            //       // console.log('Quill has detected selection',quill.getSelection().index)
+            //       // //console.log('Quill has detected selection',quill.getSelection().index)
             //     }
                 
             //     //updating our MQ's awareness of cursor position at the end to discern what has been changed
@@ -149,6 +143,16 @@
       border: none !important;
       box-shadow: none !important;
     }
+
+    * {margin: 0; padding: 0;}
+  #mybigcontainer {height: 100%; width:30%; font-size: 0;}
+  #left, #middle, #right {display: inline-block; *display: inline; zoom: 1; vertical-align: top; font-size: 12px;}
+  #left {width: 25%; background: blue;}
+  #middle {width: 50%; background: green;}
+  #right {width: 25%; background: yellow;}
+
+
+
   </style>
   
   <div class="editor-wrapper">
@@ -160,25 +164,17 @@
   <p> Cursor Position {cursor_position} </p>
 
 {#if quill_rendered}
-  
-  <p> Mq Handover {mq_state}</p>
-  
-  {#each Object.keys(mq_state) as mq_pos}
-    <!-- {typeof(mq_state{mq_pos})} -->
-  {/each}
 
   <p> QUILL RENDERING </p>
-  <ObjectVisualizer ops = {quill_obj.options.modules}> </ObjectVisualizer>
-  {#each Object.keys(quill_obj) as operation}
-  
-  <li>
-    {operation}
-      <ObjectVisualizer ops = {quill_obj[operation]}> </ObjectVisualizer>
-  </li>
-   {/each}
+  <!-- <ObjectVisualizer ops = {quill_obj.options.modules}> </ObjectVisualizer> -->
+  <!-- {#each quill_obj.ops as operation}
+    {operation.keys()}, 
+  {/each} -->
 
 {/if}
-
+ 
+  <!-- <body> -->
+  <!-- </body> -->
   <!-- <div>
   <p>{doc_delta}</p>
   <DeltaVisualizer ops={doc_delta} position = {doc_position} mq = {doc_mq} quill={quill_obj}></DeltaVisualizer>
