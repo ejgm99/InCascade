@@ -135,6 +135,14 @@ export function setupQuill(editor,cascade_map){
       myQuill.setSelection(myQuill.getSelection().index+args.dir+1)
     })
 
+    //these handle keyboard strokes to call the populate the correct key
+    myQuill.on('inline_mathquill', async function(args){
+      myQuill.format('formula', {content : 'e^x' , emitter : myQuill.emitter, type:'inline'});
+    })
+    myQuill.on('mathquill', async function(args){
+      myQuill.format('formula', {content : 'e^x' , emitter : myQuill.emitter, type:'regular'});
+    })
+
     myQuill.on('save',async function(args){
       if (post_id != -1){
       //need to get the document state and the document meta-state and save it to the database

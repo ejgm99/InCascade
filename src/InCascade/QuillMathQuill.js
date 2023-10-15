@@ -147,10 +147,17 @@ class myFormula extends Embed {
     //generate the positioning data
     newMQ(id,currentPosition+0.5)
     mathquillString = preprocessLatex(mathquillString)
-    generateMathfield({
-      'id':id,
-      'mathquillString':mathquillString
-    }, node)
+    if (value.type =='inline'){
+      generateInlineMathfield({
+        'id':id,
+        'mathquillString':mathquillString
+      }, node)
+    } else {
+      generateMathfield({
+        'id':id,
+        'mathquillString':mathquillString
+      }, node)
+    }
     node.id = id
     return node
   }

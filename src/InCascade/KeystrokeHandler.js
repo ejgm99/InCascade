@@ -5,6 +5,7 @@ var isMetaPressed = false;
 var isAltPressed = false;
 var isEnterPressed = false;
 var isSPressed = false;
+var isLPressed = false;
 var isCommandPressed = false;
 var emitter = -1;
 var isBackspacePressed = false;
@@ -37,12 +38,25 @@ export function handleKeyDown(e){
         if (isMetaPressed){
             e.preventDefault();
         } 
+    } else if (e.key === 'l') {
+        isLPressed = true;
+        if (isMetaPressed){
+            e.preventDefault();
+        } 
     } else if ((e.key) == 'Backspace'){
         isBackspacePressed = true;
     }
     if (isMetaPressed && isSPressed) {
         emitter.emit('save')
         console.log('save')
+    } if (isMetaPressed && isLPressed) {
+        if (isShiftPressed){
+            emitter.emit('mathquill')
+            console.log('Regular Mathquill Needs to fire')
+        } else{
+            emitter.emit('inline_mathquill')
+            console.log('Inline Mathquill Needs to fire')
+        }
     }
 }
 
@@ -59,5 +73,7 @@ export function handleKeyUp(e) {
         isEnterPressed = false;
     } else if (e.key === 's') {
         isSPressed = false;
+    } else if (e.key === 'l') {
+        isLPressed = false;
     }
 }
