@@ -33,9 +33,8 @@
               const CascadeEditor = await import('./CascadeEditor')
               const { default: Quill } = await import("quill");
               const MathQuillFormula  = await import('./QuillMathQuill')
-
               let cascade_map = await getPost(post_id);
-
+              CascadeEditor.setPostID(post_id)
               let quill = CascadeEditor.setupQuill(editor,cascade_map)
               doc_delta = quill.getContents().ops
               quill_obj = quill.getLength()

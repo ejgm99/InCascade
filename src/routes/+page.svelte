@@ -28,7 +28,6 @@
     // Delete each document
     documentsToDelete.forEach(async doc => {
       await db.collection('posts').doc(doc.id).delete();
-      console.log(`Document with ID ${doc.id} deleted.`);
     });
   }
 

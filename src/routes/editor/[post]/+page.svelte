@@ -1,8 +1,6 @@
 <script>
 	export let data;
-    console.log(data)
     import Editor from "../../../InCascade/Editor.svelte";
-    console.log(data)
 
 </script>
 

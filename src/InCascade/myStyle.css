@@ -1,0 +1,13 @@
+.left {
+    /* Center vertically and horizontally */
+    position: relative;
+    left: 50%;
+    margin: -25px 0 0 -25px; /* Apply negative top and left margins to truly center the element */
+  }
+
+.right {
+    /* Center vertically and horizontally */
+    position: absolute;
+    right: 30%;
+    /* margin: -25px 0 0 -25px; Apply negative top and left margins to truly center the element */
+  }

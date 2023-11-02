@@ -1,5 +1,6 @@
 //import javascript dependancies
 import Quill from 'quill'
+import left from  "./myStyle.css" assert { type: 'css' };
 //import MathQuill Dependancies
 import MathQuill from './mathquill/mathquill'
 import { getBackspacePressed } from './KeystrokeHandler';

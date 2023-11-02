@@ -52,6 +52,10 @@ export function getPosition(){
   return myQuill.getSelection()
 }
 
+export function setPostID(id){
+  post_id = id;
+}
+
 export function setState(){
 
 }
@@ -72,10 +76,18 @@ export function setupQuill(editor,cascade_map){
       setQuillEmitter(myQuill.emitter)
 
       try{
-        setMqState(cascade_map.cascade.mq)
-        myQuill.setContents(JSON.parse(cascade_map.cascade.quill))
+        try{
+          setMqState(cascade_map.cascade.mq)
+        } catch(err){
+          console.log('No MQ state set')
+        }
+        try{
+          myQuill.setContents(JSON.parse(cascade_map.cascade.quill))
+        } catch(err){
+          console.log('No Quill state set')
+        }
       } catch(err){
-        console.log('No connection to firebase...',err)
+        console.log('Fetching data from firebase failed...',err)
       }
 
       myQuill.on('text-change', function() {
