@@ -38,81 +38,13 @@
               let quill = CascadeEditor.setupQuill(editor,cascade_map)
               doc_delta = quill.getContents().ops
               quill_obj = quill.getLength()
-            //   MathQuillFormula.setQuillEmitter(quill.emitter)
-            // MathQuillFormula.setState(cascade_map.cascade.mq)
-
-            //   quill.setContents(JSON.parse(cascade_map.cascade.quill))
-            //   quill.on('text-change', function() {
-            //     try{
-            //     MathQuillFormula.setCurrentPosition(quill.getSelection().index)
-            //     } catch{}
-            //   })
-
+              console.log(quill)
             quill.on('editor-change', function(eventName) {
                 quill_rendered=true
                 quill_length = quill.getLength()
                 mq_handover = MathQuillFormula.getState()
                 quill_handover = quill.getContents()
               })
-              
-
-            //   //need to pass in the emitter to our keystroke handler to be able to save
-            //   setEmitter(quill.emitter)
-
-            //   quill.on('editor-change', function(eventName, ...args) {
-            //     if (eventName === 'text-change') {
-            //       textChange = true;
-            //     // args[0] will be delta
-            //       doc_delta = quill.getContents().ops
-            //       // need to add to all the mq's ahead of us in order to not accidentally focus on them
-            //       MathQuillFormula.updateMQPositions(quill.getSelection().index)
-            //     } else if (eventName === 'selection-change') {
-            //       // need to generate all the info necessary to understand the nature of the selection change
-            //       // and pass this info in to determine if selection needs to change
-            //       try{
-            //         //if we have a position before and after, we can decide if we need to do math to decide where the position ended up
-            //         let positionDelta = args[0].index - args[1].index
-            //         if (positionDelta*positionDelta==1){ //quick math to check if we are cursoring around
-            //           MathQuillFormula.shouldFocusOnMq([args[0].index , positionDelta])
-            //         }
-            //         textChange = false;
-            //         textChangeLength = 0;
-            //         }
-            //       catch{
-
-            //       }
-            //       // args[0] will be old range
-            //       // //console.log('Quill has detected selection',quill.getSelection().index)
-            //     }
-                
-            //     //updating our MQ's awareness of cursor position at the end to discern what has been changed
-            //     //CLEAN UP WITH MORE SANE STATE HANDLING
-            //     try{
-            //       doc_position = quill.getSelection().index
-            //       doc_mq = MathQuillFormula.MathquillState
-            //     } catch {
-
-            //     }
-
-            //   });
-
-            // quill.on('leaveMathCell',function(args){
-            //   // depending on the direction we want to move we leave teh math cell
-            //   quill.setSelection(quill.getSelection().index+args.dir+1)
-            // })
-
-            // quill.on('save',async function(args){
-            //   //need to get the document state and the document meta-state and save it to the database
-            //   // this is the data we will turn to strings and save to the database
-            //   let updated_map = {
-            //     cascade :{
-            //       quill : JSON.stringify(quill.getContents().ops),
-            //       mq : MathQuillFormula.getState()
-            //     }
-            //   }
-            //   writeDataToMapField(post_id,updated_map);
-            // })
-
 
 
         }

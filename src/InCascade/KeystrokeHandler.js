@@ -48,14 +48,14 @@ export function handleKeyDown(e){
     }
     if (isMetaPressed && isSPressed) {
         emitter.emit('save')
-        console.log('save')
+
     } if (isMetaPressed && isLPressed) {
         if (isShiftPressed){
             emitter.emit('mathquill')
-            console.log('Regular Mathquill Needs to fire')
+    
         } else{
             emitter.emit('inline_mathquill')
-            console.log('Inline Mathquill Needs to fire')
+    
         }
     }
 }
@@ -63,6 +63,8 @@ export function handleKeyDown(e){
 export function handleKeyUp(e) {
     if (e.key === 'Meta') {
       isMetaPressed = false;
+      isLPressed = false;
+      isSPressed = false;
     } else if (e.key === 'Alt') {
       isOptionPressed = false;
     } else if (e.key === 'Control') {

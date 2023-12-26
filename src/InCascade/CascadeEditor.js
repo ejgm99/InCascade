@@ -12,10 +12,12 @@ let doc_delta = 0;
 let doc_position = -1;
 let doc_mq = 0;
 let post_id = -1;
+var inMQ=false
 
 var toolbarOptions = {
     handlers : {// handlers object will be merged with default handlers object
         'formula': function(value) {
+
             if (value) {
                 this.quill.format('formula', {content : 'e^x' , emitter : this.quill.emitter});
             } else {
@@ -79,15 +81,15 @@ export function setupQuill(editor,cascade_map){
         try{
           setMqState(cascade_map.cascade.mq)
         } catch(err){
-          console.log('No MQ state set')
+          
         }
         try{
           myQuill.setContents(JSON.parse(cascade_map.cascade.quill))
         } catch(err){
-          console.log('No Quill state set')
+          
         }
       } catch(err){
-        console.log('Fetching data from firebase failed...',err)
+        
       }
 
       myQuill.on('text-change', function() {
@@ -96,12 +98,10 @@ export function setupQuill(editor,cascade_map){
         } catch{}
       })
 
-      myQuill.on('selection-change', function() {
+      myQuill.on('selection-change', function() {        
         try{
             setCurrentPosition(myQuill.getSelection().index)
-        } catch {
-          
-        }
+        } catch {}
       })
       
       //need to pass in the emitter to our keystroke handler to be able to save
@@ -118,6 +118,7 @@ export function setupQuill(editor,cascade_map){
           // need to generate all the info necessary to understand the nature of the selection change
           // and pass this info in to determine if selection needs to change
           try{
+            
             //if we have a position before and after, we can decide if we need to do math to decide where the position ended up
             let positionDelta = args[0].index - args[1].index
             if (positionDelta*positionDelta==1){ //quick math to check if we are cursoring around
@@ -125,6 +126,7 @@ export function setupQuill(editor,cascade_map){
             }
             textChange = false;
             textChangeLength = 0;
+            inMQ=false;
             }
           catch{
 
@@ -142,16 +144,30 @@ export function setupQuill(editor,cascade_map){
         }
 
       });
+
     myQuill.on('leaveMathCell',function(args){
       // depending on the direction we want to move we leave teh math cell
+      inMQ=false;
       myQuill.setSelection(myQuill.getSelection().index+args.dir+1)
+    })
+
+    myQuill.on('enterMathCell',function(args){
+      inMQ=true;
+      
     })
 
     //these handle keyboard strokes to call the populate the correct key
     myQuill.on('inline_mathquill', async function(args){
+      if (inMQ){
+        return;
+      }
       myQuill.format('formula', {content : 'e^x' , emitter : myQuill.emitter, type:'inline'});
     })
+
     myQuill.on('mathquill', async function(args){
+      if (inMQ){
+        return;
+      }
       myQuill.format('formula', {content : 'e^x' , emitter : myQuill.emitter, type:'regular'});
     })
 
