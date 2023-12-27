@@ -92,22 +92,11 @@ export function setupQuill(editor,cascade_map){
         
       }
 
-      myQuill.on('text-change', function() {
-        try{
-            setCurrentPosition(myQuill.getSelection().index)
-        } catch{}
-      })
-
-      myQuill.on('selection-change', function() {        
-        try{
-            setCurrentPosition(myQuill.getSelection().index)
-        } catch {}
-      })
-      
       //need to pass in the emitter to our keystroke handler to be able to save
       setEmitter(myQuill.emitter)
 
       myQuill.on('editor-change', function(eventName, ...args) {
+        setCurrentPosition(myQuill.getSelection().index)
         if (eventName === 'text-change') {
           textChange = true;
         // args[0] will be delta
