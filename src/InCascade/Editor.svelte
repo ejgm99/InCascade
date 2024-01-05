@@ -1,14 +1,11 @@
 <script>
     import { onMount } from "svelte";
-    import DeltaVisualizer from "../debug/deltaVisualizer.svelte";
-    import ObjectVisualizer from "../debug/ObjectVisualizer.svelte";
-    import {handleKeyDown,handleKeyUp,setEmitter} from './KeystrokeHandler'
+    import {handleKeyDown,handleKeyUp} from './KeystrokeHandler'
     import {getPost} from '../data/fetch.js'
-
     // import { setQuillEmitter, setState } from "./QuillMathQuill";
 
     //hacky check to make sure we're in browser
-    import { browser } from '$app/environment'
+    // import { browser } from '$app/environment'
     export let post_id;
 
     let editor;
@@ -27,30 +24,12 @@
     // $: quill_length = quill_length    
 
     onMount(async () => {
-
-      if (browser){
-
               const CascadeEditor = await import('./CascadeEditor')
               const { default: Quill } = await import("quill");
               const MathQuillFormula  = await import('./QuillMathQuill')
               let cascade_map = await getPost(post_id);
               CascadeEditor.setPostID(post_id)
               let quill = CascadeEditor.setupQuill(editor,cascade_map)
-              doc_delta = quill.getContents().ops
-              quill_obj = quill.getLength()
-              console.log(quill)
-            quill.on('editor-change', function(eventName) {
-                quill_rendered=true
-                quill_length = quill.getLength()
-                mq_handover = MathQuillFormula.getState()
-                quill_handover = quill.getContents()
-              })
-
-
-        }
-        
-
-
     });
   
   </script>
@@ -92,21 +71,5 @@
 
   <p> Editor {quill_obj} </p>
 
-  <p> Cursor Position {cursor_position} </p>
 
-{#if quill_rendered}
-
-  <p> QUILL RENDERING </p>
-  <!-- <ObjectVisualizer ops = {quill_obj.options.modules}> </ObjectVisualizer> -->
-  <!-- {#each quill_obj.ops as operation}
-    {operation.keys()}, 
-  {/each} -->
-
-{/if}
  
-  <!-- <body> -->
-  <!-- </body> -->
-  <!-- <div>
-  <p>{doc_delta}</p>
-  <DeltaVisualizer ops={doc_delta} position = {doc_position} mq = {doc_mq} quill={quill_obj}></DeltaVisualizer>
-  </div> -->

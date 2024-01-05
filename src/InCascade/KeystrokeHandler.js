@@ -49,7 +49,8 @@ export function handleKeyDown(e){
     if (isMetaPressed && isSPressed) {
         emitter.emit('save')
 
-    } if (isMetaPressed && isLPressed) {
+    } 
+    if (isMetaPressed && isLPressed) {
         if (isShiftPressed){
             emitter.emit('mathquill')
     

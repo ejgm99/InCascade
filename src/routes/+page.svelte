@@ -33,9 +33,11 @@
 
 </script>
 
-<button on:click={() => deleteDocumentsWithPattern('Cascade')}>
+<button on:click={() => deleteDocumentsWithPattern('Untitled')}>
     Delete Documents with Pattern
-  </button>
+</button>
+
+<a href ="/editor/new" on:click={() => console.log('create a new post') }> Create new doc </a>
 
 <ul>
     {#each documents as doc}
