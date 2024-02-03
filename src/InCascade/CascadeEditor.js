@@ -10,11 +10,6 @@ import { QuillBinding } from 'y-quill'
 import QuillCursors from 'quill-cursors'
 
 var myQuill;
-let textChange = false;
-let textChangeLength = -1;
-let doc_delta = 0;
-let doc_position = -1;
-let doc_mq = 0;
 let post_id = -1;
 var inMQ = false
 
@@ -116,11 +111,12 @@ export function setupQuill(editor, cascade_map) {
   //binding = new QuillBinding(type, myQuill, provider.awareness)
 
   myQuill.on('editor-change', function(eventName, ...args) {
-    setCurrentPosition(myQuill.getSelection().index)
+    try { 
+      setCurrentPosition(myQuill.getSelection().index)
+    } catch(error) {
+      console.log(error)
+    }
     if (eventName === 'text-change') {
-      textChange = true;
-      // args[0] will be delta
-      doc_delta = myQuill.getContents().ops
       // need to add to all the mq's ahead of us in order to not accidentally focus on them
       updateMQPositions(myQuill.getSelection().index)
     } else if (eventName === 'selection-change') {
@@ -133,8 +129,6 @@ export function setupQuill(editor, cascade_map) {
         if (positionDelta * positionDelta == 1) { //quick math to check if we are cursoring around
           shouldFocusOnMq([args[0].index, positionDelta])
         }
-        textChange = false;
-        textChangeLength = 0;
         inMQ = false;
       }
       catch {
@@ -143,14 +137,6 @@ export function setupQuill(editor, cascade_map) {
       // args[0] will be old range
     }
 
-    //updating our MQ's awareness of cursor position at the end to discern what has been changed
-    //CLEAN UP WITH MORE SANE STATE HANDLING
-    try {
-      doc_position = myQuill.getSelection().index
-      doc_mq = MathQuillFormula.MathquillState
-    } catch {
-
-    }
 
   });
 

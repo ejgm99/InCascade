@@ -9,18 +9,7 @@
     export let post_id;
 
     let editor;
-    let doc_delta = 0;
-    let doc_position = -1;
-    let doc_mq = 0;
-    let quill_length;
-    let mq_state = 0;
-    let mq_handover = 0;
-    let quill_obj = {}
-    let quill_handover = {}
-    let quill_rendered = false;
-    let cursor_position = 0;
-    $: quill_obj=quill_handover;
-    $: mq_state = mq_handover;
+
     // $: quill_length = quill_length    
 
     onMount(async () => {
@@ -55,21 +44,15 @@
     }
 
     * {margin: 0; padding: 0;}
-  #mybigcontainer {height: 100%; width:30%; font-size: 0;}
-  #left, #middle, #right {display: inline-block; *display: inline; zoom: 1; vertical-align: top; font-size: 12px;}
-  #left {width: 25%; background: blue;}
-  #middle {width: 50%; background: green;}
-  #right {width: 25%; background: yellow;}
-
-
-
+    #mybigcontainer {height: 100%; width:30%; font-size: 0;}
+    #left, #middle, #right {display: inline-block; *display: inline; zoom: 1; vertical-align: top; font-size: 12px;}
+    #left {width: 25%; background: blue;}
+    #middle {width: 50%; background: green;}
+    #right {width: 25%; background: yellow;}
   </style>
   
   <div class="editor-wrapper">
     <div on:keydown={handleKeyDown} on:keyup={handleKeyUp} bind:this={editor} />
   </div>
-
-  <p> Editor {quill_obj} </p>
-
 
  
