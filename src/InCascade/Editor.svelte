@@ -7,16 +7,17 @@
     //hacky check to make sure we're in browser
     // import { browser } from '$app/environment'
     export let post_id;
-
+    import Toast from './ui/Toast.svelte'
     let editor;
 
     // $: quill_length = quill_length    
 
     onMount(async () => {
               const CascadeEditor = await import('./CascadeEditor')
+              console.log('Imported cascade editor...')
               const { default: Quill } = await import("quill");
               const MathQuillFormula  = await import('./QuillMathQuill')
-              let cascade_map = await getPost(post_id);
+                            let cascade_map = await getPost(post_id);
               CascadeEditor.setPostID(post_id)
               let quill = CascadeEditor.setupQuill(editor,cascade_map)
     });
@@ -54,5 +55,4 @@
   <div class="editor-wrapper">
     <div on:keydown={handleKeyDown} on:keyup={handleKeyUp} bind:this={editor} />
   </div>
-
- 
+  <Toast />

@@ -8,6 +8,7 @@ import * as Y from 'yjs'
 import { WebrtcProvider } from 'y-webrtc'
 import { QuillBinding } from 'y-quill'
 import QuillCursors from 'quill-cursors'
+import {notifications} from './ui/notifications.js'
 
 var myQuill;
 let post_id = -1;
@@ -167,6 +168,7 @@ export function setupQuill(editor, cascade_map) {
   })
 
   myQuill.on('save', async function(args) {
+    notifications.info('saving... ', 1000)
     if (post_id != -1) {
       //need to get the document state and the document meta-state and save it to the database
       // this is the data we will turn to strings and save to the database
